@@ -711,7 +711,7 @@ questions = [
             },
             {
                 "answer": "C) Grundwind",
-                "correct": true
+                "correct": false
             },
             {
                 "answer": "D) Fahrtwind",
@@ -724,19 +724,19 @@ questions = [
         "answers": [
             {
                 "answer": "A) Er fällt vorlicher ein",
-                "correct": true
+                "correct": false
             },
             {
                 "answer": "B) Er fällt achterlicher ein",
-                "correct": false
+                "correct": true
             },
             {
                 "answer": "C) Er wird stärker",
-                "correct": false
+                "correct": true
             },
             {
                 "answer": "D) Er wird schwächer",
-                "correct": true
+                "correct": false
             },
         ]
     },
