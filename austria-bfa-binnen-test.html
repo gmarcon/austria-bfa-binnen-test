@@ -6,25 +6,71 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="data/questions.js"></script>
     <script type="text/javascript">
-        form = $('form');
-        $.each(questions, function(i, o){
-            console.log(o.question);
-            form.append('<h1>', o.question, '</h1>');
-            $.each(o.answers, function(i, o) {
-                console.log(o.answer);
-                console.log(o.correct);
+
+        //
+        function shuffle(array) {
+            var m = array.length, t, i;
+            // While there remain elements to shuffle…
+            while (m) {
+
+                // Pick a remaining element…
+                i = Math.floor(Math.random() * m--);
+
+                // And swap it with the current element.
+                t = array[m];
+                array[m] = array[i];
+                array[i] = t;
+            }
+            return array;
+        }
+
+        // When loading, generate the questionnaire:
+        $(document).ready(function() { 
+            shuffle(questions);
+            forty_questions = questions.slice(0,39);
+            createForm();
+        });
+
+        function createForm() {
+            $.each(forty_questions, function(question_idx, o){
+                questionHtml = ''
+                questionHtml += '<h2>' + o.question + '</h2>';
+                $.each(o.answers, function(answer_idx, o) {
+                    questionHtml += `<div><input type="checkbox" name="${question_idx}-${answer_idx}" value="${o.correct}"><label for="${question_idx}-${answer_idx}">${o.answer}</label></div>`;
+                })
+                if(o.image)
+                    questionHtml += `<img src="${o.image}" height="200">`
+                $('div[name="questions"]').append(questionHtml);
             })
-        })
-    </script>
+        }
+
+        // Check answers:
+        function checkAnswers() {
+            correct_answers = 0;
+            $.each(forty_questions, function(question_idx, o){
+                correct = true;
+                $.each(o.answers, function(answer_idx, o) {
+                    checkbox = $(`input[name=${question_idx}-${answer_idx}]`);
+                    label = $(`label[for=${question_idx}-${answer_idx}]`);
+                    if(checkbox[0].checked.toString() == checkbox[0].value) {
+                        label.css('background-color', '');
+                    } else {
+                        correct = false;
+                        label.css('background-color', 'red');
+                    }
+                })
+                if(correct)
+                    correct_answers++;
+            })
+            $('div[name="results"]').html(`${correct_answers}/40 correct answers!`);
+        }
+</script>
 </head>
 <body>
-    <h1>test</h1>
+    <h1>BFA Binnen-Theorie</h1>
     <form>
-        <h2>A1 In welchen der folgenden Abbildungen stimmen sowohl Segelstellung, als auch die Bezeichnung des Kurses?</h2>
-        <div><input type="checkbox" name="1-1" value="1-1"><label for="1-1">A) A</label></div>
-        <div><input type="checkbox" name="1-2" value="1-2"><label for="1-1">B) B</label></div>
-        <div><input type="checkbox" name="1-3" value="1-3"><label for="1-1">C) C</label></div>
-        <div><input type="checkbox" name="1-4" value="1-4"><label for="1-1">D) D</label></div>
-        <img src="images/A1.jpg" height="200">
+        <button type="button" onclick="checkAnswers()">Check</button>
+        <div name="results"></div>
+        <div name="questions"></div>
     </form>
 </body>
