@@ -27,7 +27,7 @@
         // When loading, generate the questionnaire:
         $(document).ready(function() { 
             shuffle(questions);
-            forty_questions = questions.slice(0,39);
+            forty_questions = questions.slice(0,40);
             createForm();
         });
 
@@ -39,7 +39,7 @@
                     questionHtml += `<div><input type="checkbox" name="${question_idx}-${answer_idx}" value="${o.correct}"><label for="${question_idx}-${answer_idx}">${o.answer}</label></div>`;
                 })
                 if(o.image)
-                    questionHtml += `<img src="${o.image}" height="200">`
+                    questionHtml += `<img src="${o.image}" style="max-width: 400px; max-height: 200px;">`
                 $('div[name="questions"]').append(questionHtml);
             })
         }
@@ -62,7 +62,7 @@
                 if(correct)
                     correct_answers++;
             })
-            $('div[name="results"]').html(`${correct_answers}/40 correct answers!`);
+            $('div[name="results"]').html(`${correct_answers}/${forty_questions.length} correct answers!`);
         }
 </script>
 </head>
