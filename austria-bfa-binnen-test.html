@@ -64,13 +64,28 @@
             })
             $('div[name="results"]').html(`${correct_answers}/${forty_questions.length} correct answers!`);
         }
+
+        // Clean check:
+        function cleanCheckAnswers() {
+            $.each(forty_questions, function(question_idx, o){
+                $.each(o.answers, function(answer_idx, o) {
+                    label = $(`label[for=${question_idx}-${answer_idx}]`);
+                    label.css('background-color', '');
+                })
+            })
+            $('div[name="results"]').html("Results will appear here!");
+        }
+
 </script>
 </head>
 <body>
-    <h1>BFA Binnen-Theorie</h1>
-    <form>
+    <div style="position: -webkit-sticky; position: sticky; top: 0; background-color: #ffffff;">
+        <h1>BFA Binnen-Theorie</h1>
         <button type="button" onclick="checkAnswers()">Check</button>
-        <div name="results"></div>
+        <button type="button" onclick="cleanCheckAnswers()">Clean</button>
+        <div name="results">Results will appear here!</div>
+    </div>
+    <form>
         <div name="questions"></div>
     </form>
 </body>
