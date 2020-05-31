@@ -56,7 +56,7 @@ function createForm() {
         if(o.image)
             questionHtml += `<img src="${o.image}" style="max-width: 400px; max-height: 200px;">`;
         $.each(o.answers, function(answer_idx, o) {
-            questionHtml += `<div class="form-check"><input class="form-check-input" type="checkbox" name="${question_idx}-${answer_idx}" value="${o.correct}"><label class="form-check-label" for="${question_idx}-${answer_idx}">${o.answer}</label></div>`;
+            questionHtml += `<div class="btn-group-toggle" data-toggle="buttons"><label class="btn btn-light" for="${question_idx}-${answer_idx}"><input type="checkbox" name="${question_idx}-${answer_idx}" value="${o.correct}">${o.answer.slice(0,2)}</label><span id="${question_idx}-${answer_idx}-text">${o.answer.slice(2)}</span></div>`;
         });
         form.append(questionHtml);
     })
@@ -71,7 +71,7 @@ function checkAnswers() {
             correct = true;
             $.each(o.answers, function(answer_idx, o) {
                 checkbox = $(`input[name=${question_idx}-${answer_idx}]`);
-                label = $(`label[for=${question_idx}-${answer_idx}]`);
+                label = $(`span[id=${question_idx}-${answer_idx}-text]`);
                 if(checkbox[0].checked.toString() == checkbox[0].value) {
                     label.removeClass('bg-danger')
                 } else {
@@ -99,7 +99,7 @@ function checkAnswers() {
         // Remove all markers after a check:
         $.each(forty_questions, function(question_idx, o){
             $.each(o.answers, function(answer_idx, o) {
-                label = $(`label[for=${question_idx}-${answer_idx}]`);
+                label = $(`span[id=${question_idx}-${answer_idx}-text]`);
                 label.removeClass('bg-danger')
             });
         });
