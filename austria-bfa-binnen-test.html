@@ -1,178 +1,69 @@
 <!doctype html>
-<html>
+<html lang="de-at">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
     <title>BFA-Binnen Theorie Test</title>
     <link rel="stylesheet" href="css/styles.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="data/questions.js"></script>
-    <script type="text/javascript">
-
-        // Fisher–Yates shuffle algorithm for anarray:
-        function shuffle(array) {
-            var m = array.length, t, i;
-            // While there remain elements to shuffle…
-            while (m) {
-
-                // Pick a remaining element…
-                i = Math.floor(Math.random() * m--);
-
-                // And swap it with the current element.
-                t = array[m];
-                array[m] = array[i];
-                array[i] = t;
-            }
-            return array;
-        }
-
-        // When loading, generate the questionnaire:
-        $(document).ready(function() { 
-            createNewQuiz();
-        });
-
-        function createNewQuiz() {
-            // Clone array of all answers:
-            forty_questions = [...questions];
-            // Shuffle:
-            shuffle(forty_questions);
-            // Select first forty questions:
-            forty_questions = forty_questions.slice(0,40);
-            // Create quiz HTML code::
-            createForm();
-        }
-
-        // Create HTML code for selected questions:
-        function createForm() {
-            html_output = $('div[name="questions"]');
-            html_output.html('');
-            $.each(forty_questions, function(question_idx, o){
-                questionHtml = ''
-                questionHtml += '<h2>' + o.question + '</h2>';
-                $.each(o.answers, function(answer_idx, o) {
-                    questionHtml += `<div><input type="checkbox" name="${question_idx}-${answer_idx}" value="${o.correct}"><label for="${question_idx}-${answer_idx}">${o.answer}</label></div>`;
-                })
-                if(o.image)
-                    questionHtml += `<img src="${o.image}" style="max-width: 400px; max-height: 200px;">`
-                    html_output.append(questionHtml);
-            })
-        }
-
-        // Check answers:
-        function checkAnswers() {
-            
-            button_html = $('button[name="checkButton"]');
-            if(button_html.text() === 'Check') {
-                correct_answers = 0;
-                $.each(forty_questions, function(question_idx, o){
-                    correct = true;
-                    $.each(o.answers, function(answer_idx, o) {
-                        checkbox = $(`input[name=${question_idx}-${answer_idx}]`);
-                        label = $(`label[for=${question_idx}-${answer_idx}]`);
-                        if(checkbox[0].checked.toString() == checkbox[0].value) {
-                            label.css('background-color', '');
-                        } else {
-                            correct = false;
-                            label.css('background-color', 'red');
-                        }
-                    })
-                    if(correct)
-                        correct_answers++;
-                })
-                button_html.html('Clear check');
-                if(correct_answers>=32) {
-                    $('span[name="results"]').html(`${correct_answers}/${forty_questions.length} correct answers!`);
-                    $('span[name="results"]').css('background-color', 'green');
-                }
-                else {
-                    $('span[name="results"]').html(`${correct_answers}/${forty_questions.length} correct answers!`);
-                    $('span[name="results"]').css('background-color', 'red');
-                }
-            } else {
-                // Remove all markers after a check:
-                $.each(forty_questions, function(question_idx, o){
-                    $.each(o.answers, function(answer_idx, o) {
-                        label = $(`label[for=${question_idx}-${answer_idx}]`);
-                        label.css('background-color', '');
-                    })
-                })
-                button_html.html('Check');
-                $('span[name="results"]').html("Results will appear here!");
-                $('span[name="results"]').css('background-color', '');
-            }
-        }
-
-        // All questions with answers:
-        function allAnswers() {
-            html_output = $('div[name="questions"]');
-            html_output.html('');
-            $.each(questions, function(question_idx, o){
-                questionHtml = ''
-                questionHtml += '<h2>' + o.question + '</h2>';
-                $.each(o.answers, function(answer_idx, o) {
-                    questionHtml += `<div><input type="checkbox" name="${question_idx}-${answer_idx}" value="${o.correct}" ${o.correct ? 'checked' : ''}><label for="${question_idx}-${answer_idx}">${o.answer}</label></div>`;
-                })
-                if(o.image)
-                    questionHtml += `<img src="${o.image}" style="max-width: 400px; max-height: 200px;">`
-                    html_output.append(questionHtml);
-            })
-        }
-
-        // Generate answers matrix:
-        function answersMatrix() {
-            last_question_idx = 0;
-            last_letter = '';
-            answers_matrix = new Array(4);
-            for(i=0; i<4; i++)
-                answers_matrix[i] = new Array(questions.length);
-            html_output = $('div[name="questions"]');
-            html_output.html('');
-            $.each(questions, function(question_idx, o){
-                if(o.question[0] !== last_letter) {
-                    if(last_letter !== '') {
-                        html_table = `<h1>${last_letter}</h1>`;
-                        html_table += '<table border="1" bordercolor="black" cellspacing="0" cellpadding="1">';
-                        html_table += '<tr><td></td>';
-                        for(j=last_question_idx;j<question_idx;j++)
-                            html_table += `<td>${j - last_question_idx + 1}</td>`;
-                        html_table += '</tr>';
-                        for(i=0;i<4;i++) {
-                            html_table += '<tr>';
-                            html_table += `<td>${String.fromCharCode(65+i)}</td>`;
-                            for(j=last_question_idx;j<question_idx;j++)
-                                if(answers_matrix[i][j])
-                                    html_table += '<td>X</td>';
-                                else
-                                    html_table += '<td></td>';
-                            html_table += '</tr>';
-                        }
-                        html_table += '</table>';
-                        html_output.append(html_table);
-                    }
-                    last_letter = o.question[0];
-                    last_question_idx = question_idx;
-                }
-                $.each(o.answers, function(answer_idx, o) {
-                    answers_matrix[answer_idx][question_idx] = o.correct;
-                })
-            })
-        }
-
-</script>
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
 </head>
+
 <body>
-    <div style="position: -webkit-sticky; position: sticky; top: 0; background-color: #ffffff;">
-        <h1>BFA Binnen-Theorie</h1>
-        <div>
-            <button type="button" onclick="if(confirm('Sure?')) createNewQuiz()">New Quiz</button>
-            <button type="button" onclick="allAnswers()">Fragenkatalog</button>
-            <button type="button" onclick="answersMatrix()">Answers Matrix</button>
-        </div>
-        <div>
-            <button type="button" name="checkButton" onclick="checkAnswers()">Check</button>
-            <span name="results">Results will appear here!</span>
-        </div>
-    </div>
-    <form>
-        <div name="questions"></div>
-    </form>
+    <header>
+        <!-- Fixed navbar -->
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+            <div class="navbar-nav mr-auto">
+                <form class="form-inline">
+                    <button type="button" class="btn btn-primary mx-1" name="checkButton" onclick="checkAnswers();">Prüfen</button>
+                    <span class="navbar-text ml-2" name="results"></span>
+                </form>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+                aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse my-0 flex-grow-0" id="navbarCollapse">
+                <div class="navbar-nav">
+                    <form class="form-inline">
+                        <button type="button" class="btn btn-secondary mx-1"
+                            onclick="if(confirm('Sicher?'))   createNewQuiz();">Neuer Test</button>
+                        <button type="button" class="btn btn-secondary mx-1" onclick="backToQuiz()">Test</button>
+                        <button type="button" class="btn btn-secondary mx-1"
+                            onclick="allAnswers()">Fragenkatalog</button>
+                        <button type="button" class="btn btn-secondary mx-1"
+                            onclick="answersMatrix()">Antworten</button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+
+    </header>
+
+    <!-- Main content: form with list of questions -->
+    <main role="main" class="container">
+        <form name="questions">
+        </form>
+        <form name="allquestions">
+        </form>
+    </main>
+
+    <!-- JavaScript code -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+    <script src="scripts/questions.js"></script>
+    <script src="scripts/quiz.js"></script>
 </body>
+
+</html>
